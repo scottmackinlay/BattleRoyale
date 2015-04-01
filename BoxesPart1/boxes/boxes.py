@@ -30,6 +30,11 @@ class BoxesGame(ConnectionListener):
         self.num = None
         self.Connect()
 
+    def Network_startgame(self, data):
+        self.running=True
+        self.num=data["player"]
+        self.gameid=data["gameid"]
+
     def initGraphics(self):
         self.normallinev=pygame.image.load("normalline.png")
         self.normallineh=pygame.transform.rotate(pygame.image.load("normalline.png"), -90)
