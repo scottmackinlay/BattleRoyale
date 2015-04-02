@@ -1,2 +1,2 @@
 # BattleRoyale
-#ConwaysBattleRoyale/BattleRoyale
+#http://conwaysbattleroyale.github.io/BattleRoyale/
