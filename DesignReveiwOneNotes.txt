@@ -1,0 +1,20 @@
+Software Design Review One Notes:
+
+General Notes:
+	-> scrolling play area
+
+
+AI Notes:
+	-> Avoid places enemies commonly die
+	-> movement behavior exchange
+		-> real time interaction
+	-> enemies reproduce
+		-> stronger enemies have a higher reproduction speed
+			-> controlled by damage dealt
+	-> some enemies can heal others
+		-> maybe stronger enemies consume others to heal
+
+Character Notes:
+	-> choose gun/upgrade
+		-> make it so that the gun does not lead to boring evolution
+	

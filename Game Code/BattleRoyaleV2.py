@@ -394,7 +394,7 @@ def drawEnemies(alist):
 def drawAll(alist,blist):
     drawBullets(alist)
     drawEnemies(blist)
-    killEnemy(enemyList,bulletList)
+    # killEnemy(enemyList,bulletList)
 
 ################################################################################################################
 # Pre-Run Initializatio                                                                                        #
