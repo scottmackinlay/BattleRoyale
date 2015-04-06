@@ -11,7 +11,6 @@ class ClientChannel(Channel):
 	def __init__(self, *args, **kwargs):
 		self.pos=[0,0]
 		self.move=[0,0]
-		self.name = "anonymous"
 		Channel.__init__(self, *args, **kwargs)
 	
 	def Close(self):
@@ -19,9 +18,6 @@ class ClientChannel(Channel):
 
 	def Network_move(self,data):
 		self.move=data['move']
-	
-	def Network_name(self, data):
-		self.name = data['name']
 
 class Serve(Server):
 	channelClass = ClientChannel
@@ -31,6 +27,10 @@ class Serve(Server):
 		print 'Server launched'
 	
 	def Connected(self, channel, addr):
+		channel.Send({'action':'setup',
+			'screenSize':model.screenSize,
+			'playerSize':model.playerSize,
+			'zombieSize':model.zombieSize})
 		model.AddPlayer(channel)
 	
 	def DelPlayer(self, player):
@@ -42,8 +42,8 @@ class Serve(Server):
 	def Update(self):
 		model.Update()
 		self.SendToAll({'action':'update',
-			'update':[p.pos for p in model.players]})
-
+			'update':[[p.pos for p in model.players],model.zombieList]})
+	
 	def Launch(self):
 		while True:
 			self.Pump()
@@ -52,7 +52,11 @@ class Serve(Server):
 
 class Model(object):
 	def __init__(self):
+		self.screenSize=(500,500)
+		self.playerSize=32
+		self.zombieSize=16
 		self.players=WeakKeyDictionary()
+		self.zombieList=[[10,10],[50,50]]
 
 	def AddPlayer(self,channel):
 		self.players[channel] = True
@@ -66,6 +70,10 @@ class Model(object):
 		for player in self.players:
 			player.pos[0]+=player.move[0]
 			player.pos[1]+=player.move[1]
+
+	def AddZombies(self):
+		for z in range(10):
+			pass
 
 # get command line argument of server, port
 if len(sys.argv) != 2:
