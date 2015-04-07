@@ -19,19 +19,19 @@ class Client(ConnectionListener):
 			if event.type == KEYDOWN and event.key == K_LEFT:
 				self.move[0]-=1
 			if event.type == KEYUP and event.key == K_LEFT:
-				self.move[0]=0
+				self.move[0]+=1
 			if event.type == KEYDOWN and event.key == K_RIGHT:
 				self.move[0]+=1
 			if event.type == KEYUP and event.key == K_RIGHT:
-				self.move[0]=0
+				self.move[0]-=1
 			if event.type == KEYDOWN and event.key == K_UP:
 				self.move[1]-=1
 			if event.type == KEYUP and event.key == K_UP:
-				self.move[1]=0
+				self.move[1]+=1
 			if event.type == KEYDOWN and event.key == K_DOWN:
 				self.move[1]+=1
 			if event.type == KEYUP and event.key == K_DOWN:
-				self.move[1]=0
+				self.move[1]-=1
 		connection.Send({'action':'move','move':self.move})
 
 	def Network_setup(self,data):
@@ -69,15 +69,16 @@ class View(object):
 	def frame(self,data):
 		self.screen.fill(self.WHITE)
 		for player in data[0]:
-			pygame.draw.rect(self.screen, self.RED, 
-				[player[0], player[1], self.playerSize,self.playerSize])
+			pygame.draw.rect(self.screen, self.RED,[
+				player[0]-self.playerSize/2, 
+				player[1]-self.playerSize/2, 
+				self.playerSize,self.playerSize])
 		for zombie in data[1]:
-			pygame.draw.rect(self.screen, self.BLACK, 
-				[zombie[0], zombie[1], self.zombieSize,self.zombieSize])
+			pygame.draw.rect(self.screen, self.BLACK,[
+				zombie[0]-self.zombieSize/2, 
+				zombie[1]-self.zombieSize/2, 
+				self.zombieSize,self.zombieSize])
 		pygame.display.flip()
-
-
-
 
 if len(sys.argv) != 2:
 	print "Usage:", sys.argv[0], "host:port"

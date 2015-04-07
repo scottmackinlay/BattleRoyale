@@ -3,6 +3,8 @@ from time import sleep, localtime
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 from weakref import WeakKeyDictionary
+import random
+import math
 
 class ClientChannel(Channel):
 	"""
@@ -40,7 +42,8 @@ class Serve(Server):
 		[p.Send(data) for p in model.players]
 
 	def Update(self):
-		model.Update()
+		if model.players:
+			model.Update()
 		self.SendToAll({'action':'update',
 			'update':[[p.pos for p in model.players],model.zombieList]})
 	
@@ -52,11 +55,11 @@ class Serve(Server):
 
 class Model(object):
 	def __init__(self):
-		self.screenSize=(500,500)
+		self.screenSize=(700,500)
 		self.playerSize=32
 		self.zombieSize=16
 		self.players=WeakKeyDictionary()
-		self.zombieList=[[10,10],[50,50]]
+		self.zombieList=[]
 
 	def AddPlayer(self,channel):
 		self.players[channel] = True
@@ -67,13 +70,34 @@ class Model(object):
 		print 'person deleted!'
 
 	def Update(self):
+		playerPositions=[]
+		#players
 		for player in self.players:
 			player.pos[0]+=player.move[0]
 			player.pos[1]+=player.move[1]
-
+			playerPositions+=[[player.pos[0],player.pos[1]]]
+		#zombies
+		if not self.zombieList:
+			self.AddZombies()
+		for zombie in self.zombieList:
+			closestPlayer=playerPositions[0]
+			closestDist=self.dist(zombie,playerPositions[0])
+			for player in playerPositions:
+				currentDist=self.dist(zombie,player)
+				if currentDist<closestDist:
+					closestPlayer=player
+					closestDist=currentDist
+			if closestDist!=0:
+				zombie[0]+=(closestPlayer[0]-zombie[0])/(2*closestDist)
+				zombie[1]+=(closestPlayer[1]-zombie[1])/(2*closestDist)
+	
+	def dist(self,zombie,player):
+		return math.sqrt((zombie[0]-player[0])**2+(zombie[1]-player[1])**2)
 	def AddZombies(self):
-		for z in range(10):
-			pass
+		for z in range(100):
+			self.zombieList+=[[
+			random.randint(0,int(self.screenSize[0])-self.zombieSize),
+			random.randint(0,int(self.screenSize[1])-self.zombieSize)]]
 
 # get command line argument of server, port
 if len(sys.argv) != 2:
